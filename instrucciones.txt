@@ -1,0 +1,154 @@
+quiero crear una aplicacion web usando python con flet.
+la pantalla inicial, que en un contenedor apropiado se incluye un text que dija TKT y al lado un iconbutton con una lupa.
+cuando presiono la lupa aparece una textfield con el label nro de TKT que pueda ingresar el operador una cadena de no mas de 10 digitos, todos en mayuscula.
+cuando presione ENTER buscara en una tabla de PyAdmin que se encuentra en una BD de nombre ASSISTANT . La tabla se llama TKT y consta de las siguientes columnas:
+- id, autoincremental
+- TKT string corto
+- interno string largo
+- interno string largo
+
+1 - si la consulta no encuentra registros coincidentes, mostrara un formulario que consta de los siguientes campos: TKT (string de no mas de 10 caracteres y mayuscula), interno y externo con un textfield multiline de al menos 3 lineas. y un boton para guardar.
+cuando presione guardar habra una funcion que hace las siguientes funciones:
+- controlara que TKT no sea vacio
+- controlara que TKT comience al menos con 3 letras y termine con numeros.
+- sacara los espacios que existan al principio y al final
+- controlara que el TKT que se desea ingresar no exista en la tabla TKT
+si se dan todas esas condiciones, entonces ingresa el dato y luego lo muestra en una datatable que si no esta visible lo muestre. mostrara todos los campos de la tabla y tendra una columna inicial con un checkbox que estara en true por defecto, tambien esa tabla inicial contendra un iconbutton edit y delete.
+funcion de los botones:
+- edit = muestra el formulario de guardar anterior, ocultando el boton guardar y mostrando el boton editar y tambien un text que muestre el id. este no debe ser editable. los restantes textfield los llena con los datos del registro capturado.
+Permite editar todos los campos.
+Cuando presiono EDITAR, controla:
+- que TKT no sea vacio
+- que TKT comience al menos con 3 letras y termine con numeros
+- sacara los espacios existentes al comienzo y final de TKT
+- controlara que no haya TKT REPETIDO, salvo el que corresponde a al registro que estamos editando, es decir la busqueda debe decir <>ID del actual
+luego oculta el formulario editar y muestra el datatable con los datos de los TKT seleccionados, incluyendo el TKT recien editado, con los valores nuevos.
+
+- el boton DELETE lo unico que hace es eliminar el TKT del DATATABLE.
+
+--------------------------------
+2 - si la consulta encuentra 1 registro coincidente, oculta los controles de la busqueda y muestra el datatable incluyendo este registro encontrado
+
+--------------------------------
+3- si hay mas de una coincidencia. muestra un listado de las alternativas que coinciden con la busqueda, con todos los campos de la tabla y agrega una columna inicial con un iconbutton seleccionar.
+- si selecciono algun registro. se oculta el datatable de coincidencias y agrega el dato seleccionado al datatable de seleccionados.
+- tiene que haber tambien un boton para que en caso que ninguna de las coincidencias sea la que buscamos cierre u oculte este control. Como 'Cancelar'
+
+-------------------
+las tablas tienen que ser en un formato elegante, ordenadas por numero de TKT
+
+recordar que las librerias de icons y de colors se escriben como Icons y Colors
+
+------------------
+Cuando la tabla de tickets seleccionados se encuentre sin registros, debe ocultarse.
+
+la barra de búsqueda, el campo de búsqueda tienen que estar alineados a la izquierda
+------------------------
+INTERVINIENTE
+
+crear una linea divisoria al final de los controles actuales
+quiero crear el mismo esquema de controles y funciones que para TKT pero con los siguientes cambios:
+reemplazar TKT por INTERVINIENTE.
+la tabla de consulta sera intervinientes que contendra los siguientes campos:
+- id autoincremental
+- interviniente (string maximo 100 caracteres)
+- interno (string largo)
+- externo (string largo)
+
+---------------------------
+PRODUCTOR
+a continuacion de los controles actuales en la pantalla inicial, que en un contenedor apropiado se incluye un text que dija PRODUCTOR y al lado un iconbutton con una lupa.
+cuando presiono la lupa aparece una textfield con el label "Codigo o Nombre Productor" que pueda ingresar el operador una cadena todos en mayuscula.
+cuando presione ENTER buscara en una tabla de PyAdmin que se encuentra en una BD de nombre ASSISTANT . La tabla se llama productores y consta de las siguientes columnas:
+- id autoincremental
+- nombre string de 255 caracteres
+- codigo string de 10 caracteres
+- interno string largo
+- externo string largo
+
+buscara registros que coincidan con el ingreso en dos columnas, nombre o codigo. es Or y no And, en la columna nombre, la busqueda debe coincidir con todos las palabras ingresadas, independientemente del nombre. por ejemplo encontrara el campo PAPARINI CARLOS, aunque se escriba en la consulta CARLOS PAPARINI
+
+1 - si la consulta no encuentra registros coincidentes, mostrara un formulario que consta de los siguientes campos: NOMBRE (string solo permite mayusculas), codigo (string no mayor de 10 caracteres con el formato xx-xxxxxx donde x es un numero de 0-9) interno y externo con un textfield multiline de al menos 3 lineas. y un boton para guardar.
+cuando presione guardar habra una funcion que hace las siguientes funciones:
+- controlara que NOMBRE Y CODIGO no sea vacio
+- controlara que CODIGO mantenga este formato xx-xxxxxx donde x son numeros de 0-9
+- sacara los espacios que existan al principio y al final, en todos los campos
+- controlara que el CODIGO que se desea ingresar no exista en la tabla productores
+si se dan todas esas condiciones, entonces ingresa el dato y luego lo muestra en una datatable que si no esta visible lo muestre. mostrara todos los campos de la tabla y tendra una columna inicial con un checkbox que estara en true por defecto, tambien esa tabla inicial contendra un iconbutton edit y delete.
+funcion de los botones:
+- edit = muestra el formulario de guardar anterior, ocultando el boton guardar y mostrando el boton editar y tambien un text que muestre el id. este no debe ser editable. los restantes textfield los llena con los datos del registro capturado.
+Permite editar todos los campos.
+Cuando presiono EDITAR, controla:
+- controlara que NOMBRE Y CODIGO no sea vacio
+- controlara que CODIGO mantenga este formato xx-xxxxxx donde x son numeros de 0-9
+- sacara los espacios que existan al principio y al final, en todos los campos
+- controlara que el CODIGO que se desea ingresar no exista en la tabla productores salvo el que corresponde a al registro que estamos editando, es decir la busqueda debe decir <>ID del actual
+
+luego oculta el formulario editar y muestra el datatable con los datos de los TKT seleccionados, incluyendo el TKT recien editado, con los valores nuevos.
+
+- el boton DELETE lo unico que hace es eliminar el REGISTRO del DATATABLE.
+
+--------------------------------
+2 - si la consulta encuentra 1 registro coincidente, oculta los controles de la busqueda y muestra el datatable incluyendo este registro encontrado
+
+--------------------------------
+3- si hay mas de una coincidencia. muestra un listado de las alternativas que coinciden con la busqueda, con todos los campos de la tabla y agrega una columna inicial con un iconbutton seleccionar.
+- si selecciono algun registro. se oculta el datatable de coincidencias y agrega el dato seleccionado al datatable de seleccionados.
+- tiene que haber tambien un boton para que en caso que ninguna de las coincidencias sea la que buscamos cierre u oculte este control. Como 'Cancelar'
+
+-------------------
+las tablas tienen que ser en un formato elegante, ordenadas por numero de CODIGO
+
+recordar que las librerias de icons y de colors se escriben como Icons y Colors
+
+------------------
+Cuando la tabla de PRODUCTORES seleccionados se encuentre sin registros, debe ocultarse.
+
+la barra de búsqueda, el campo de búsqueda tienen que estar alineados a la izquierda
+
+---------------------------------------------------------------------------
+TEMA-ESTADO
+crear una linea divisoria al final de los controles actuales
+a continuacion de los controles actuales en la pantalla inicial, que en un contenedor apropiado se incluye un text que dija TEMA-ESTADO y al lado un iconbutton con una lupa.
+cuando presiono la lupa aparece una textfield con el label "Tema-Estado" que pueda ingresar el operador una cadena
+cuando presione ENTER buscara en una tabla de PyAdmin que se encuentra en una BD de nombre ASSISTANT . La tabla se llama temaEstado y consta de las siguientes columnas:
+- id autoincremental
+- temaEstado string largo
+
+buscara registros que coincidan con el ingreso de las palabras ingresadas, sin importar el orden del ingreso. Ejemplo: Facturas marzo , buscara los registros que coincidan con facturas y con marzo
+
+1 - si la consulta no encuentra registros coincidentes, mostrara un formulario que consta de los siguientes campos: Tema-Estado y un boton para guardar.
+cuando presione guardar habra una funcion que hace las siguientes funciones:
+- controlara que Tema_Estado no sea vacio
+- sacara los espacios que existan al principio y al final, en todos los campos
+
+si se dan todas esas condiciones, entonces ingresa el dato y luego lo muestra en una datatable que si no esta visible lo muestre. mostrara todos los campos de la tabla y tendra una columna inicial con un checkbox que estara en true por defecto, tambien esa tabla inicial contendra un iconbutton edit y delete.
+funcion de los botones:
+- edit = muestra el formulario de guardar anterior, ocultando el boton guardar y mostrando el boton editar y tambien un text que muestre el id. este no debe ser editable. los restantes textfield los llena con los datos del registro capturado.
+Permite editar todos los campos.
+Cuando presiono EDITAR, controla:
+- controlara que Tema_Estado no sea vacio
+- sacara los espacios que existan al principio y al final, en todos los campos
+
+
+luego oculta el formulario editar y muestra el datatable con los datos de los Tema_Estadp seleccionados, incluyendo el Tema_Estado recien editado, con los valores nuevos.
+
+- el boton DELETE lo unico que hace es eliminar el REGISTRO del DATATABLE.
+
+--------------------------------
+2 - si la consulta encuentra 1 registro coincidente, oculta los controles de la busqueda y muestra el datatable incluyendo este registro encontrado
+
+--------------------------------
+3- si hay mas de una coincidencia. muestra un listado de las alternativas que coinciden con la busqueda, con todos los campos de la tabla y agrega una columna inicial con un iconbutton seleccionar.
+- si selecciono algun registro. se oculta el datatable de coincidencias y agrega el dato seleccionado al datatable de seleccionados.
+- tiene que haber tambien un boton para que en caso que ninguna de las coincidencias sea la que buscamos cierre u oculte este control. Como 'Cancelar'
+
+-------------------
+las tablas tienen que ser en un formato elegante
+
+recordar que las librerias de icons y de colors se escriben como Icons y Colors
+
+------------------
+Cuando la tabla de Tema_Estado seleccionados se encuentre sin registros, debe ocultarse.
+
+la barra de búsqueda, el campo de búsqueda tienen que estar alineados a la izquierda
