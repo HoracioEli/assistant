@@ -578,6 +578,164 @@ def main(page: ft.Page):
     productor_main_datatable = ft.DataTable(columns=[ft.DataColumn(ft.Text("")), ft.DataColumn(ft.Text("ID")), ft.DataColumn(ft.Text("Nombre")), ft.DataColumn(ft.Text("Código")), ft.DataColumn(ft.Text("Interno")), ft.DataColumn(ft.Text("Externo")), ft.DataColumn(ft.Text("Acciones"))], rows=[])
     productor_main_data_view = ft.Container(visible=False, padding=20, content=ft.Column(controls=[ft.Text("Productores Seleccionados", size=18, weight=ft.FontWeight.BOLD), ft.Container(content=productor_main_datatable, border=ft.border.all(1, ft.Colors.GREY_300), border_radius=ft.border_radius.all(5))], horizontal_alignment=ft.CrossAxisAlignment.START, spacing=15))
 
+    # === Funciones de Lógica y Navegación de la UI (TEMA-ESTADO) ===
+
+    def show_tema_estado_view(search=False, form=False, results=False, main=False):
+        tema_estado_search_bar.visible = not search
+        tema_estado_search_field_container.visible = search
+        tema_estado_form_view.visible = form
+        tema_estado_results_view.visible = results
+        tema_estado_main_data_view.visible = main
+        page.update()
+
+    def show_tema_estado_search_field(e):
+        show_tema_estado_view(search=True)
+        tema_estado_search_field.focus()
+
+    def execute_tema_estado_search(e):
+        search_term = tema_estado_search_field.value.strip()
+        if not search_term:
+            show_tema_estado_view()
+            return
+        found_results = database.search_tema_estado(search_term)
+        if len(found_results) == 0:
+            show_new_tema_estado_form(search_term)
+        elif len(found_results) == 1:
+            add_to_tema_estado_main_table(found_results[0])
+            show_tema_estado_view(main=True)
+        else:
+            populate_tema_estado_results_table(found_results)
+            show_tema_estado_view(results=True)
+        tema_estado_search_field.value = ""
+
+    def save_new_tema_estado(e):
+        tema_estado_value = tema_estado_form_tema_estado.value.strip()
+        if not validate_tema_estado_form(tema_estado_value):
+            return
+        new_tema_estado = database.insert_tema_estado(
+            tema_estado=tema_estado_value
+        )
+        if new_tema_estado:
+            add_to_tema_estado_main_table(new_tema_estado)
+            show_tema_estado_view(main=True)
+
+    def update_tema_estado_data(e):
+        tema_estado_id = int(tema_estado_form_id_text.value)
+        tema_estado_value = tema_estado_form_tema_estado.value.strip()
+        if not validate_tema_estado_form(tema_estado_value, exclude_id=tema_estado_id):
+            return
+        updated_tema_estado = database.update_tema_estado(
+            tema_estado_id=tema_estado_id,
+            tema_estado=tema_estado_value
+        )
+        if updated_tema_estado:
+            update_row_in_tema_estado_main_table(updated_tema_estado)
+            show_tema_estado_view(main=True)
+
+    def validate_tema_estado_form(tema_estado_value, exclude_id=None):
+        is_valid = True
+        if not tema_estado_value:
+            tema_estado_form_tema_estado.error_text = "El campo Tema-Estado no puede estar vacío."
+            is_valid = False
+        elif database.check_tema_estado_exists(tema_estado_value, exclude_id=exclude_id):
+            tema_estado_form_tema_estado.error_text = "Este Tema-Estado ya existe."
+            is_valid = False
+        else:
+            tema_estado_form_tema_estado.error_text = ""
+        tema_estado_form_tema_estado.update()
+        return is_valid
+
+    def add_to_tema_estado_main_table(tema_estado_data):
+        tema_estado_id_str = str(tema_estado_data['id'])
+        if tema_estado_id_str in tema_estado_main_table_rows:
+            return
+        new_row = ft.DataRow(
+            cells=[
+                ft.DataCell(ft.Checkbox(value=True)),
+                ft.DataCell(ft.Text(tema_estado_id_str)),
+                ft.DataCell(ft.Text(tema_estado_data['temaestado'])),
+                ft.DataCell(ft.Row([
+                    ft.IconButton(icon=ft.Icons.EDIT, tooltip="Editar", on_click=partial(show_edit_tema_estado_form, tema_estado_data)),
+                    ft.IconButton(icon=ft.Icons.DELETE, tooltip="Eliminar", on_click=partial(delete_tema_estado_from_view, tema_estado_id_str)),
+                ])),
+            ]
+        )
+        tema_estado_main_table_rows[tema_estado_id_str] = new_row
+        tema_estado_main_datatable.rows.append(new_row)
+        tema_estado_main_datatable.rows.sort(key=lambda r: r.cells[2].content.value)
+        page.update()
+
+    def update_row_in_tema_estado_main_table(tema_estado_data):
+        tema_estado_id_str = str(tema_estado_data['id'])
+        if tema_estado_id_str in tema_estado_main_table_rows:
+            row_to_update = tema_estado_main_table_rows[tema_estado_id_str]
+            row_to_update.cells[2].content.value = tema_estado_data['temaestado']
+            tema_estado_main_datatable.rows.sort(key=lambda r: r.cells[2].content.value)
+            page.update()
+
+    def delete_tema_estado_from_view(tema_estado_id_str, e):
+        if tema_estado_id_str in tema_estado_main_table_rows:
+            row_to_remove = tema_estado_main_table_rows.pop(tema_estado_id_str)
+            tema_estado_main_datatable.rows.remove(row_to_remove)
+            if not tema_estado_main_datatable.rows:
+                show_tema_estado_view()
+            else:
+                page.update()
+
+    def populate_tema_estado_results_table(results):
+        tema_estado_results_datatable.rows.clear()
+        for res in results:
+            tema_estado_results_datatable.rows.append(
+                ft.DataRow(cells=[
+                    ft.DataCell(ft.IconButton(icon=ft.Icons.ADD_TASK, tooltip="Seleccionar", on_click=partial(select_tema_estado_from_results, res))),
+                    ft.DataCell(ft.Text(res['temaestado'])),
+                ])
+            )
+        page.update()
+
+    def select_tema_estado_from_results(tema_estado_data, e):
+        add_to_tema_estado_main_table(tema_estado_data)
+        show_tema_estado_view(main=True)
+
+    def close_tema_estado_results_view(e):
+        show_tema_estado_view()
+
+    def show_new_tema_estado_form(search_term=""):
+        tema_estado_form_title.value = "Crear Nuevo Tema-Estado"
+        tema_estado_form_id_text.visible = False
+        tema_estado_form_save_button.visible = True
+        tema_estado_form_edit_button.visible = False
+        tema_estado_form_tema_estado.value = search_term
+        tema_estado_form_tema_estado.error_text = ""
+        show_tema_estado_view(form=True)
+
+    def show_edit_tema_estado_form(tema_estado_data, e):
+        tema_estado_form_title.value = "Editar Tema-Estado"
+        tema_estado_form_id_text.value = str(tema_estado_data['id'])
+        tema_estado_form_id_text.visible = True
+        tema_estado_form_save_button.visible = False
+        tema_estado_form_edit_button.visible = True
+        tema_estado_form_tema_estado.value = tema_estado_data['temaestado']
+        tema_estado_form_tema_estado.error_text = ""
+        show_tema_estado_view(form=True)
+
+    # === Definición de Controles de la UI (TEMA-ESTADO) ===
+    tema_estado_main_table_rows = {}
+    tema_estado_search_bar = ft.Row([ft.Text("TEMA-ESTADO", size=20, weight=ft.FontWeight.BOLD), ft.IconButton(icon=ft.Icons.SEARCH, on_click=show_tema_estado_search_field, tooltip="Buscar Tema-Estado")], alignment=ft.MainAxisAlignment.START)
+    tema_estado_search_field = ft.TextField(label="Tema-Estado", width=300, on_submit=execute_tema_estado_search)
+    tema_estado_search_field_container = ft.Container(content=ft.Row([tema_estado_search_field], alignment=ft.MainAxisAlignment.START), visible=False)
+    tema_estado_form_title = ft.Text(size=18, weight=ft.FontWeight.BOLD)
+    tema_estado_form_id_text = ft.Text(weight=ft.FontWeight.BOLD)
+    tema_estado_form_tema_estado = ft.TextField(label="Tema-Estado", width=450)
+    tema_estado_form_save_button = ft.ElevatedButton(text="Guardar", on_click=save_new_tema_estado, icon=ft.Icons.SAVE)
+    tema_estado_form_edit_button = ft.ElevatedButton(text="Editar", on_click=update_tema_estado_data, icon=ft.Icons.SAVE_AS)
+    tema_estado_form_view = ft.Container(visible=False, padding=20, border=ft.border.all(1, ft.Colors.GREY_300), border_radius=ft.border_radius.all(10),
+        content=ft.Column(controls=[tema_estado_form_title, tema_estado_form_id_text, tema_estado_form_tema_estado, ft.Row([tema_estado_form_save_button, tema_estado_form_edit_button], alignment=ft.MainAxisAlignment.CENTER)], spacing=15, horizontal_alignment=ft.CrossAxisAlignment.CENTER))
+    tema_estado_results_datatable = ft.DataTable(columns=[ft.DataColumn(ft.Text("Seleccionar")), ft.DataColumn(ft.Text("Tema-Estado"))], rows=[])
+    tema_estado_results_view = ft.Container(visible=False, padding=20, content=ft.Column(controls=[ft.Text("Resultados de la Búsqueda", size=18, weight=ft.FontWeight.BOLD), ft.Container(content=tema_estado_results_datatable, border=ft.border.all(1, ft.Colors.GREY_300), border_radius=ft.border_radius.all(5)), ft.ElevatedButton(text="Cancelar", on_click=close_tema_estado_results_view)], horizontal_alignment=ft.CrossAxisAlignment.START, spacing=15))
+    tema_estado_main_datatable = ft.DataTable(columns=[ft.DataColumn(ft.Text("")), ft.DataColumn(ft.Text("ID")), ft.DataColumn(ft.Text("Tema-Estado")), ft.DataColumn(ft.Text("Acciones"))], rows=[])
+    tema_estado_main_data_view = ft.Container(visible=False, padding=20, content=ft.Column(controls=[ft.Text("Tema-Estado Seleccionados", size=18, weight=ft.FontWeight.BOLD), ft.Container(content=tema_estado_main_datatable, border=ft.border.all(1, ft.Colors.GREY_300), border_radius=ft.border_radius.all(5))], horizontal_alignment=ft.CrossAxisAlignment.START, spacing=15))
+
     # === Montaje Final de la Página ===
     page.add(
         search_bar, 
@@ -597,12 +755,19 @@ def main(page: ft.Page):
         productor_form_view,
         productor_results_view,
         productor_main_data_view,
+        ft.Divider(),
+        tema_estado_search_bar,
+        tema_estado_search_field_container,
+        tema_estado_form_view,
+        tema_estado_results_view,
+        tema_estado_main_data_view,
     )
     
     # Establece el estado inicial de la vista.
     show_view()
     show_interviniente_view()
     show_productor_view()
+    show_tema_estado_view()
 
 # === Punto de Entrada para Ejecutar la Aplicación ===
 ft.app(target=main, view=ft.AppView.WEB_BROWSER)

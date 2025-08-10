@@ -482,6 +482,12 @@ def create_table_if_not_exists():
                     temaEstado TEXT NOT NULL UNIQUE
                 );
             """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS localidades (
+                    id SERIAL PRIMARY KEY,
+                    localidad VARCHAR(255) NOT NULL UNIQUE
+                );
+            """)
             conn.commit()
             print("Tablas verificadas/creadas exitosamente.")
     except psycopg2.Error as e:

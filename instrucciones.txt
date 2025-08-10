@@ -152,3 +152,5 @@ recordar que las librerias de icons y de colors se escriben como Icons y Colors
 Cuando la tabla de Tema_Estado seleccionados se encuentre sin registros, debe ocultarse.
 
 la barra de búsqueda, el campo de búsqueda tienen que estar alineados a la izquierda
+
+----------------------
