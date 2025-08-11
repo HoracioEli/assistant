@@ -153,4 +153,93 @@ Cuando la tabla de Tema_Estado seleccionados se encuentre sin registros, debe oc
 
 la barra de búsqueda, el campo de búsqueda tienen que estar alineados a la izquierda
 
-----------------------
+---------------------------------------------------------------------------
+CREAR TABLA localidades con los siguientes campos:
+- id -> autoincremental
+- localidad es un string largo
+
+-----------------------
+
+ASEGURADO
+
+crear una linea divisoria al final de los controles actuales
+a continuacion de los controles actuales en la pantalla inicial, que en un contenedor apropiado se incluye un text que dija ASEGURADO y al lado un iconbutton con una lupa.
+cuando presiono la lupa aparece una textfield con el label "ASEGURADO" que pueda ingresar el operador una cadena
+cuando presione ENTER buscara en una tabla de PyAdmin que se encuentra en una BD de nombre ASSISTANT . La tabla se llama asegurados y consta de las siguientes columnas:
+- id autoincremental
+- id_localidad es un entero con una llave foranea que se relaciona con la tabla localidades (que tiene los siguienes campos: id autoincrementa, localidad (string largo)
+- nombre
+- direccion
+- cuit
+- interno
+- externo
+
+
+buscara registros que coincidan con el ingreso de las palabras ingresadas, sin importar el orden del ingreso. Ejemplo: Facturas marzo , buscara los registros que coincidan con facturas y con marzo
+buscara en los campos nombre y cuit
+
+1 - si la consulta no encuentra registros coincidentes, mostrara un formulario que consta de los siguientes campos: 
+- nombre (solo ingreso de mayusculas)
+- direccion (solo ingreso de mayusculas)
+- idLoc y localidad en el mismo row (id enable = false, localidad solo mayusculas)
+- cuit
+- interno multilinea con 3 row
+- externo  multilinea con 3 row
+y un boton para guardar.
+
+
+cuando presione guardar habra una funcion que hace las siguientes funciones:
+- controlara que nombre, direccion, idLc, cuit no sea vacio
+- controlara que el CUIT sea correcto (ver funcion de verificarCUIT en archivo herramientas.py)
+- sacara los espacios que existan al principio y al final, en todos  los campos
+
+si se dan todas esas condiciones, entonces ingresa el dato y luego lo muestra en una datatable que si no esta visible lo muestre. mostrara todos los campos de la tabla y tendra una columna inicial con un checkbox que estara en true por defecto, tambien esa tabla inicial contendra un iconbutton edit y delete.
+funcion de los botones:
+- edit = muestra el formulario de guardar anterior, ocultando el boton guardar y mostrando el boton editar y tambien un text que muestre el id. este no debe ser editable. los restantes textfield los llena con los datos del registro capturado.
+Permite editar todos los campos.
+Cuando presiono EDITAR, controla:
+- controlara que nombre, direccion, idLc, cuit no sea vacio
+- controlara que el CUIT sea correcto (ver funcion de verificarCUIT en archivo herramientas.py)
+- controlara que ningun otro registro tenga el mismo CUIT salvo el del IDACTUAL
+- sacara los espacios que existan al principio y al final, en todos los campos
+
+
+luego oculta el formulario editar y muestra el datatable con los datos de los Tema_Estadp seleccionados, incluyendo el Tema_Estado recien editado, con los valores nuevos.
+
+- el boton DELETE lo unico que hace es eliminar el REGISTRO del DATATABLE.
+
+--------------------------------
+2 - si la consulta encuentra 1 registro coincidente, oculta los controles de la busqueda y muestra el datatable incluyendo este registro encontrado
+
+--------------------------------
+3- si hay mas de una coincidencia. muestra un listado de las alternativas que coinciden con la busqueda, con todos los campos de la tabla y agrega una columna inicial con un iconbutton seleccionar.
+- si selecciono algun registro. se oculta el datatable de coincidencias y agrega el dato seleccionado al datatable de seleccionados.
+- mostrara la localidad, a traves de la llave foranea que enlaza con localidades
+- tiene que haber tambien un boton para que en caso que ninguna de las coincidencias sea la que buscamos cierre u oculte este control. Como 'Cancelar'
+
+-------------------
+las tablas tienen que ser en un formato elegante
+
+recordar que las librerias de icons y de colors se escriben como Icons y Colors
+
+------------------
+Cuando la tabla de Tema_Estado seleccionados se encuentre sin registros, debe ocultarse.
+
+la barra de búsqueda, el campo de búsqueda tienen que estar alineados a la izquierda
+
+----------------------------
+BUSCAR LOCALIDAD:
+En el formulario de EDITAR Y GUARDAR de ASEGURADO, cuando se presiona ENTER sobre la textfield localidad, debe hacer una busqueda en la tabla localidades, donde deberan coincidir las palabras que la integren, sacando cualquier otro caracter, por ejemplo si el texto es BAHIA BLANCA - 8000 - BUENOS AIRES (BUSCARA POR LAS PALABRAS BAHIA BLANCA BUENOS AIRES Y 8000, NO TENDRA EN CUENTA LOS - O () SI LOS HUBIERA
+
+- si encuentra 1 registro coincidente entonces llena el idloc del formulario con id de la localidad y en textfield localidad , agrega el dato del campo localidad y bloquea el control, agrega tambien un iconbutton para habilitar el textfeld localidad
+
+- cuando presiono en el iconbutton habilitar localidad, entonces habilita textfild y null en idloc.
+
+- si no encuentra registros coincidentes, informa que no hay coincidentes y pregunta si quiere ingresarlo, en caso de aceptar, muestra boton agregar localidad.
+
+- en el boton agrega localidad, chequea que textfield localidad no se encuentre vacio y guarda el registro en localidades. Este nuevo registro lo muestra en textfieldlocalidad y carga el id en idloc, inhabilita el textfield localidad, oculta el boton guardar y muestra el boton habilitar.
+
+- si encuentra varios registros coincidentes muestra una tabla con los registros encontrados. agrega una columna para para seleccionarlo y tambien un boton para editar localidad.
+- si presiono sobre seleccionado carga el dato en idLoc el id y en textfield localidad, el dato de la columna localidad y oculta la tabla de localidades encontradas.
+- si presiono editar, carga el dato en idloc y en textfield localidad y muestra el boton editar. hace foco en textfield localidad.
+- cuando presiono el boton editar, se edita el registro teniendo en cuenta el idloc y el dato de textfield localidad. Inhabilita el control textlocalidad y muestra el boton habilitar
